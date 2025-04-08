@@ -25,39 +25,47 @@ class VideoController extends Controller
     }
     
     public function store(Request $request){
+       
         $data = $request->all();
-        $validator = Validator::make($data,[
+    
+        
+        $validator = Validator::make($data, [
             "title" => "required|string|max:255",
             "description" => "required|string|max:255",
             "url" => "required",
             "thumbnail" => "required|string",
-            "post_id" => "sometimes|numeric"
-
+            "post_id" => "nullable|numeric"  
         ]);
-        if($validator->fails()){
+    
+        
+        if ($validator->fails()) {
             return $this->BadRequest($validator);
         }
-
+    
+       
         $video = new Video();
-        $video -> title = $data['title'];
-        $video -> description = $data['description'];
-        $video -> thumbnail = $data['thumbnail'];
-        $video -> url = $data['url'];
-        $video -> post_id = $data ['post_id'];
-        $video -> save();
-        
-        return $this->Ok($video , "Video Created Successfully");
-   }
+        $video->title = $data['title'];
+        $video->description = $data['description'];
+        $video->thumbnail = $data['thumbnail'];
+        $video->url = $data['url'];
+        $video->post_id = $data['post_id'] ?? null;
+        $video->save();
+        $videoData = Video::with('post')->find($video->id);
+    
+       
+        return $this->Ok($videoData, "Video Created Successfully");
+    }
+    
 
    public function update(Request $request){
-    $data = $request->all();
-    $validator = Validator::make($data, [
-        "id" => "required|exists:videos,id",  
-        "title" => "sometimes|string|max:255",  
-        "description" => "sometimes|string|max:255",  
-        "url" => "sometimes|string|max:255",  
-        "thumbnail" => "sometimes|string", 
-    ]);
+        $data = $request->all();
+        $validator = Validator::make($data, [
+            "id" => "required|exists:videos,id",  
+            "title" => "sometimes|string|max:255",  
+            "description" => "sometimes|string|max:255",  
+            "url" => "sometimes|string|max:255",  
+            "thumbnail" => "sometimes|string", 
+        ]);
     if ($validator->fails()) {
         return $this->BadRequest($validator);
     }

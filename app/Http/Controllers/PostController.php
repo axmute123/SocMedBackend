@@ -11,11 +11,10 @@ use Illuminate\Support\Facades\Validator;
 class PostController extends Controller
 {
     public function index(){
-        // // $posts = Post::with('user')->orderBy('id', 'DESC')->get();
+        $posts = Post::with('user')->orderBy('id', 'DESC')->get();
         // $posts=Post::all();
         // $posts->load(['user', 'video']);
-
-        $posts= Post::with('user') ->get();
+        // $posts= Post::with('user') ->get();
         return $this->Ok( $posts, 'retrieved');
     }
     
